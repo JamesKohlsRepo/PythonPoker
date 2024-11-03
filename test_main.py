@@ -14,7 +14,6 @@ class TestDeck(unittest.TestCase):
         self.assertNotEqual(original_order, self.deck.cards)  # Order should be different
 
     def test_deal(self):
-        initial_deck_size = len(self.deck.cards)
         card = self.deck.deal(1)  # Deal one card, returns a list with one item
         self.assertIsInstance(card, list)  # Expect a list
         self.assertEqual(len(card), 1)  # List should contain exactly one card
@@ -36,18 +35,35 @@ class TestPokerGame(unittest.TestCase):
         self.game = PokerGame()
         self.player1 = Player("James")
         self.player2 = Player("Belle")
+        self.player3 = Player("Robot")
 
     def test_add_player(self):
-        self.game.addPlayer([self.player1, self.player2])
-        self.assertEqual(len(self.game.players), 2)
+        self.game.addPlayers(self.player1)
+        self.assertEqual(len(self.game.players), 1)
         self.assertEqual(self.game.players[0].name, "James")
-        self.assertEqual(self.game.players[1].name, "Belle")
+        
+    def test_add_players(self):
+        self.game.addPlayers(self.player1, self.player2, self.player3)
+        self.assertEqual(len(self.game.players), 3)
+        self.assertEqual(self.game.players[2].name, "Robot")
+
+    def test_remove_players(self):
+        self.game.addPlayers(self.player1, self.player2, self.player3)
+        self.game.removePlayers(self.player2)
+        self.assertEqual(len(self.game.players), 2)
+        self.assertEqual(self.game.players[1].name, "Robot")
 
     def test_community_cards(self):
         self.game.deck.shuffle()
-        for _ in range(5):  # Deal 5 community cards as in poker
-            self.game.community_cards.append(self.game.deck.deal())
+        self.game.community_cards.extend(self.game.deck.deal(5))
         self.assertEqual(len(self.game.community_cards), 5)
 
+class TestPokerGameState(unittest.TestCase):
+    def setUp(self):
+        self.game = PokerGame()
+        self.player1 = Player("user1")
+
+
 if __name__ == '__main__':
+    print("\nBEGIN TESTING")
     unittest.main()
