@@ -72,13 +72,9 @@ class PokerGame:
         """
         for player in self.players:
             full_hand = sorted(player.hand + self.community_cards, key=lambda card: card['value'])
-
             # check for flush should update some attribuite of the player
             self.checkForFlush(full_hand)
 
-
-            #print(f"{player.name}'s sorted hand: {full_hand}")
-            print("\n")
 
     def checkForFlush(self, hand):
         suits = {"clubs": [], "diamonds": [], "hearts": [], "spades": []}
@@ -94,7 +90,8 @@ class PokerGame:
                     if last_card_val != card['value'] + 1:
                         return ("Flush")
                 return ("Straight / Royal Flush")
-
+            else:
+                return("none")
 
                 # print(f"{suit}: ")
                 # for card in cards:

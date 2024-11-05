@@ -106,11 +106,9 @@ class TestPokerGameState(unittest.TestCase):
     class TestCardRankings(unittest.TestCase):
         def setUp(self):
             self.game = PokerGame()
-            self.player1 = Player("user1")
-            self.player2 = Player("user2")
-            for _ in range(5):
-                self.game.advance_state()
-            self.game.showdown()
+
+        def test_Flush(self):
+            self.game.checkForFlush({})
 
 if __name__ == '__main__':
     print("\nBEGIN TESTING")
