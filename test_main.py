@@ -1,5 +1,6 @@
 import unittest
-from main import Deck, Player, PokerGame, GameState  # Adjust to the actual file/module name
+from gameLogic import Deck, Player, PokerGame, GameState  # Adjust to the actual file/module name
+# from winCalculation import determineWinner
 
 class TestDeck(unittest.TestCase):
     def setUp(self):
@@ -100,6 +101,16 @@ class TestPokerGameState(unittest.TestCase):
         self.game.advance_state()
         self.assertEqual(self.game.current_state, GameState.RIVER)
         self.assertEqual(len(self.game.community_cards), 5)
+        self.game.advance_state()
+
+    class TestCardRankings(unittest.TestCase):
+        def setUp(self):
+            self.game = PokerGame()
+            self.player1 = Player("user1")
+            self.player2 = Player("user2")
+            for _ in range(5):
+                self.game.advance_state()
+            self.game.showdown()
 
 if __name__ == '__main__':
     print("\nBEGIN TESTING")

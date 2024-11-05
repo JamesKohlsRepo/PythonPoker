@@ -1,6 +1,7 @@
 import json  
 import random
 from enum import Enum
+# from winCalculation import determineWinner
 
 class GameState(Enum):
     INIT = 0                
@@ -31,6 +32,7 @@ class Player:
     def __init__(self, player_name):
         self.name = player_name
         self.hand = []
+        self.handValue = []
         self.isHuman = False
 
 class PokerGame:
@@ -65,7 +67,80 @@ class PokerGame:
         self.community_cards.extend(self.deck.deal(count))
 
     def showdown(self):
-        print()
+        """
+        First, Each players cards (2 hand and 5 community) are sorted 
+        """
+        for player in self.players:
+            full_hand = sorted(player.hand + self.community_cards, key=lambda card: card['value'])
+
+            # check for flush should update some attribuite of the player
+            self.checkForFlush(full_hand)
+
+
+            #print(f"{player.name}'s sorted hand: {full_hand}")
+            print("\n")
+
+    def checkForFlush(self, hand):
+        suits = {"clubs": [], "diamonds": [], "hearts": [], "spades": []}
+        for card in hand:
+            suit = card['suit']
+            suits[suit].append(card)
+        # Check each suit for a flush
+        for suit, cards in suits.items():
+            if len(cards) >= 5:
+                # check for straight flush
+                last_card_val = cards[0]['value']
+                for card in cards[:1]:
+                    if last_card_val != card['value'] + 1:
+                        return ("Flush")
+                return ("Straight / Royal Flush")
+
+
+                # print(f"{suit}: ")
+                # for card in cards:
+                #     print(card['value'])
+                #return("flush")
+        # for suit in suits:
+        #     if len(suit) >= 5:
+        #         return(suit)
+            # Step 2: Check for flush as soon as we have 5 cards of the same suit
+            # if len(suits[suit]) == 5:
+            #     compare_card = suits[suit][0]
+            #     for x in range(1,5):
+            #         if suits[suit][x]['value'] != compare_card['value']+1:
+            #             return("Flush")
+            #         else:
+            #              compare_card = suits[suit][x]
+            #     if suits[suit][-1]['value'] == 14:
+            #         return("Royal Flush")
+            #     else:
+            #         return("Straight Flush")
+        #print(suits)
+
+                #     if suits[suit][-1].value == 14:
+                #         return("Royal Fulsh")
+                #     else: 
+                #         return("Straight Flush")
+                # else:
+                #     return("Flush!")
+
+                # full_hand is already sorted, so these are the top 5 cards in this suit
+                # return suits[suit]
+
+
+        # Royal Flush: five cards of the same suit, ranked ace through ten
+        # Straight Flush: five cards of the same suit and consecutively ranked
+        # Four of a Kind: four cards of the same rank
+        # Full House: three cards of the same rank and two more cards of the same rank
+        # Flush: any five cards of the same suit
+        # Straight: any five cards consecutively ranked
+        # Three of a Kind: three cards of the same rank
+        # Two Pair: two cards of the same rank and two more cards of the same rank
+        # One Pair: two cards of the same rank
+        # High Card: five unmatched cards
+
+
+
     
     def advance_state(self):
         if self.current_state == GameState.INIT:
