@@ -1,4 +1,5 @@
 import unittest
+from exampleHands import ExampleHands
 from gameLogic import Deck, Player, PokerGame, GameState  # Adjust to the actual file/module name
 # from winCalculation import determineWinner
 
@@ -103,12 +104,42 @@ class TestPokerGameState(unittest.TestCase):
         self.assertEqual(len(self.game.community_cards), 5)
         self.game.advance_state()
 
-    class TestCardRankings(unittest.TestCase):
-        def setUp(self):
-            self.game = PokerGame()
+class TestCardRankings(unittest.TestCase):
+    def setUp(self):
+        self.game = PokerGame()
+        self.hands = ExampleHands()
 
-        def test_Flush(self):
-            self.game.checkForFlush({})
+    def test_not_Flush(self):
+        x = self.game.checkForFlush(self.hands.not_flush_hand_1)
+        self.assertEqual(x, None)
+
+    def test_Flush(self):
+        x = self.game.checkForFlush(self.hands.flush_hand_1)
+        self.assertEqual(x, 5)
+    
+    def test_Ace_LowFlush(self):
+        x = self.game.checkForFlush(self.hands.straight_flush_hand_2)
+        self.assertEqual(x, 8)
+    
+    def test_Ace_LowFlush_2(self):
+        x = self.game.checkForFlush(self.hands.straight_flush_hand_3)
+        self.assertEqual(x, 8)
+
+    def test_Straight_Flush(self):
+        x = self.game.checkForFlush(self.hands.Straight_flush_hand_1)
+        self.assertEqual(x, 8)
+
+    def test_Royal_Flush(self):
+        x = self.game.checkForFlush(self.hands.Royal_flush_hand_1)
+        self.assertEqual(x, 9)
+
+    def test_Four_Of_A_Kind(self):
+        x = self.game.checkForRank(self.hands.Four_of_a_kind_1)
+        self.assertEqual(x, 7)
+
+    def test_Four_Of_A_Kind_2(self):
+        x = self.game.checkForRank(self.hands.Four_of_a_kind_2)
+        self.assertEqual(x, 7)
 
 if __name__ == '__main__':
     print("\nBEGIN TESTING")

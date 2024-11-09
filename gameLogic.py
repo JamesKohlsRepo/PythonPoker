@@ -35,6 +35,11 @@ class Player:
         self.handValue = []
         self.isHuman = False
 
+class HandRankings:
+    def __init__(self, score, cards):
+        self.score = score
+        self.cards = cards
+
 class PokerGame:
     def __init__(self):
         self.community_cards = []
@@ -78,63 +83,62 @@ class PokerGame:
 
     def checkForFlush(self, hand):
         suits = {"clubs": [], "diamonds": [], "hearts": [], "spades": []}
+        
         for card in hand:
-            suit = card['suit']
-            suits[suit].append(card)
+            suits[card['suit']].append(card)
+
         # Check each suit for a flush
         for suit, cards in suits.items():
             if len(cards) >= 5:
-                # check for straight flush
-                last_card_val = cards[0]['value']
-                for card in cards[:1]:
-                    if last_card_val != card['value'] + 1:
-                        return ("Flush")
-                return ("Straight / Royal Flush")
+                if [card['value'] for card in cards[:5]] == [10, 11, 12, 13, 14]:
+                    return 9  # Royal Flush
+                if [card['value'] for card in cards[:5]] == [2, 3, 4, 5, 14]:
+                    return 8  # Ace-low Straight Flush
+                consecutive_count = 1
+                for i in range(1, len(cards)):
+                    if cards[i]['value'] == cards[i - 1]['value'] + 1:
+                        consecutive_count += 1
+                        if consecutive_count == 5:
+                            return 8  # Straight Flush
+                    else:
+                        consecutive_count = 1
+                return 5  # Regular Flush
+        return None # No Flush found
+
+    def checkForRank(self, hand):
+        valid_pairs = []
+        prev_val = hand[0]['value']
+        consecutive_count = 1
+        for i in range(1, len(hand)):
+            if hand[i]['value'] == prev_val:
+                consecutive_count += 1
             else:
-                return("none")
+                prev_val = hand[i]['value']
+                print(f"new val {prev_val}")
+                if consecutive_count == 4:
+                    valid_pairs.append(HandRankings(7, hand[i - 4:i]))
+                    consecutive_count = 1
+                elif consecutive_count == 3:
+                    valid_pairs.append(HandRankings(3, hand[i - 3:i]))
+                    consecutive_count = 1
+                elif consecutive_count == 2:
+                    valid_pairs.append(HandRankings(2, hand[i - 2:i]))
+                    consecutive_count = 1
+        if len(valid_pairs) >= 1:
+            return valid_pairs[0].score
+        else: 
+            return None
 
-                # print(f"{suit}: ")
-                # for card in cards:
-                #     print(card['value'])
-                #return("flush")
-        # for suit in suits:
-        #     if len(suit) >= 5:
-        #         return(suit)
-            # Step 2: Check for flush as soon as we have 5 cards of the same suit
-            # if len(suits[suit]) == 5:
-            #     compare_card = suits[suit][0]
-            #     for x in range(1,5):
-            #         if suits[suit][x]['value'] != compare_card['value']+1:
-            #             return("Flush")
-            #         else:
-            #              compare_card = suits[suit][x]
-            #     if suits[suit][-1]['value'] == 14:
-            #         return("Royal Flush")
-            #     else:
-            #         return("Straight Flush")
-        #print(suits)
-
-                #     if suits[suit][-1].value == 14:
-                #         return("Royal Fulsh")
-                #     else: 
-                #         return("Straight Flush")
-                # else:
-                #     return("Flush!")
-
-                # full_hand is already sorted, so these are the top 5 cards in this suit
-                # return suits[suit]
-
-
-        # Royal Flush: five cards of the same suit, ranked ace through ten
-        # Straight Flush: five cards of the same suit and consecutively ranked
-        # Four of a Kind: four cards of the same rank
-        # Full House: three cards of the same rank and two more cards of the same rank
-        # Flush: any five cards of the same suit
-        # Straight: any five cards consecutively ranked
-        # Three of a Kind: three cards of the same rank
-        # Two Pair: two cards of the same rank and two more cards of the same rank
-        # One Pair: two cards of the same rank
-        # High Card: five unmatched cards
+        # {done} Royal Flush 9: five cards of the same suit, ranked ace through ten
+        # {done} Straight Flush 8 : five cards of the same suit and consecutively ranked
+        # {done} Four of a Kind 7: four cards of the same rank
+        # Full House 6: three cards of the same rank and two more cards of the same rank
+        # {done} Flush 5: any five cards of the same suit
+        # Straight 4: any five cards consecutively ranked
+        # Three of a Kind 3: three cards of the same rank
+        # Two Pair 2: two cards of the same rank and two more cards of the same rank
+        # One Pair 1: two cards of the same rank
+        # High Card 0: five unmatched cards
 
 
 
