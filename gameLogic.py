@@ -172,13 +172,25 @@ class PokerGame:
         else:
             return None
 
+    def checkForStraight(self, hand):
+        prev = hand[0]['value']
+        counter = 0
+        for i in range (1, len(hand)):
+            if hand[i]['value'] == prev + 1:
+                counter += 1
+            else:
+                counter = 0
+            prev = hand[i]['value'] 
+            if counter == 4:
+                return HandRankings(4,hand[i-4:i+1], []) # straight
+        return None
 
         # {done} Royal Flush 9: five cards of the same suit, ranked ace through ten
         # {done} Straight Flush 8 : five cards of the same suit and consecutively ranked
         # {done} Four of a Kind 7: four cards of the same rank
-        # Full House 6: three cards of the same rank and two more cards of the same rank
+        # {done} Full House 6: three cards of the same rank and two more cards of the same rank
         # {done} Flush 5: any five cards of the same suit
-        # Straight 4: any five cards consecutively ranked
+        # {done} Straight 4: any five cards consecutively ranked
         # {done} Three of a Kind 3: three cards of the same rank
         # {done} Two Pair 2: two cards of the same rank and two more cards of the same rank
         # {done} One Pair 1: two cards of the same rank

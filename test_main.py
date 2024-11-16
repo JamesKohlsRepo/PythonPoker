@@ -177,6 +177,14 @@ class TestCardRankings(unittest.TestCase):
         x = self.game.checkForRank(self.hands.three_of_a_kind_two_two_of_a_kind)
         self.assertEqual(x.score, 6)
 
+    def test_straight_1(self):
+        x = self.game.checkForStraight(self.hands.straight_1)
+        self.assertEqual(x.score, 4)
+
+    def test_straight_2(self):
+        x = self.game.checkForStraight(self.hands.straight_2)
+        self.assertEqual(x.score, 4)
+
 if __name__ == '__main__':
     print("\nBEGIN TESTING")
     unittest.main()

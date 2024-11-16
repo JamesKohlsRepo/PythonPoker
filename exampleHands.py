@@ -169,3 +169,23 @@ class ExampleHands:
         {"suit": "clubs", "rank": "K", "value": 12},
         {"suit": "spades", "rank": "K", "value": 12},
     ]
+
+    straight_1 = [
+        {"suit": "hearts", "rank": "2", "value": 2},
+        {"suit": "clubs", "rank": "3", "value": 3},
+        {"suit": "spades", "rank": "4", "value": 4},
+        {"suit": "diamonds", "rank": "5", "value": 5},
+        {"suit": "hearts", "rank": "6", "value": 6},
+        {"suit": "clubs", "rank": "10", "value": 10},
+        {"suit": "spades", "rank": "K", "value": 12},
+    ]
+
+    straight_2 = [
+        {"suit": "hearts", "rank": "6", "value": 6},
+        {"suit": "clubs", "rank": "7", "value": 7},
+        {"suit": "spades", "rank": "10", "value": 10},
+        {"suit": "diamonds", "rank": "J", "value": 11},
+        {"suit": "hearts", "rank": "K", "value": 12},
+        {"suit": "clubs", "rank": "Q", "value": 13},
+        {"suit": "spades", "rank": "A", "value": 14},
+    ]
