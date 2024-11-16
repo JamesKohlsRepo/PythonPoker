@@ -135,11 +135,47 @@ class TestCardRankings(unittest.TestCase):
 
     def test_Four_Of_A_Kind(self):
         x = self.game.checkForRank(self.hands.Four_of_a_kind_1)
-        self.assertEqual(x, 7)
+        self.assertEqual(x.score, 7)
 
     def test_Four_Of_A_Kind_2(self):
         x = self.game.checkForRank(self.hands.Four_of_a_kind_2)
-        self.assertEqual(x, 7)
+        self.assertEqual(x.score, 7)
+
+    def test_Three_of_a_kind_1(self):
+        x = self.game.checkForRank(self.hands.Three_of_a_kind_1)
+        self.assertEqual(x.score, 3)
+
+    def test_two_Three_of_a_kind_1(self):
+        x = self.game.checkForRank(self.hands.two_Three_of_a_kind_1)
+        self.assertEqual(x.score, 6)
+
+    def test_Two_of_a_kind_1(self):
+        x = self.game.checkForRank(self.hands.Two_of_a_kind_1)
+        self.assertEqual(x.score, 2)
+
+    def test_Two_pair_1(self):
+        x = self.game.checkForRank(self.hands.Two_pair_1)
+        self.assertEqual(x.score, 2)
+
+    def test_full_house_1(self):
+        x = self.game.checkForRank(self.hands.full_house_1)
+        self.assertEqual(x.score, 6)
+
+    def test_full_house_2(self):
+        x = self.game.checkForRank(self.hands.full_house_2)
+        self.assertEqual(x.score, 6)
+
+    def test_four_of_a_kind_and_two_of_a_kind(self):
+        x = self.game.checkForRank(self.hands.four_of_a_kind_and_two_of_a_kind)
+        self.assertEqual(x.score, 7)
+
+    def test_three_two_of_a_kind(self):
+        x = self.game.checkForRank(self.hands.three_two_of_a_kind)
+        self.assertEqual(x.score, 2)
+
+    def test_three_of_a_kind_two_two_of_a_kind(self):
+        x = self.game.checkForRank(self.hands.three_of_a_kind_two_two_of_a_kind)
+        self.assertEqual(x.score, 6)
 
 if __name__ == '__main__':
     print("\nBEGIN TESTING")

@@ -36,9 +36,10 @@ class Player:
         self.isHuman = False
 
 class HandRankings:
-    def __init__(self, score, cards):
+    def __init__(self, score, r_cards, k_cards):
         self.score = score
-        self.cards = cards
+        self.rank_cards = r_cards
+        self.kick_cards = r_cards
 
 class PokerGame:
     def __init__(self):
@@ -105,29 +106,72 @@ class PokerGame:
                 return 5  # Regular Flush
         return None # No Flush found
 
-    def checkForRank(self, hand):
+    def checkForPairs(self, hand):
+        """
+        Takes a hand of 7 cards, returns all valid pairs
+
+        Parameters:
+        hand (List of Dicts): 2 hand cards + 5 community cards 
+
+        Returns 
+        valid_pairs (list of list): cards comprising the hand
+        reconstructed_list (list): cards not used in pairs, used for tie breaking
+        """
         valid_pairs = []
-        prev_val = hand[0]['value']
-        consecutive_count = 1
-        for i in range(1, len(hand)):
-            if hand[i]['value'] == prev_val:
-                consecutive_count += 1
+        ranks = {2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [], 13: [], 14: []}
+        for card in hand:
+            ranks[card['value']].append(card)
+
+        for rank in reversed(list(ranks.items())):
+            i  = len(rank[1])
+            if i >= 2:
+                valid_pairs.append(rank[1])
+                ranks[rank[0]] = []
+                #return i
+        reconstructed_list = []
+        for rank in ranks.keys():
+            reconstructed_list.extend(ranks[rank])
+        
+        return valid_pairs, reconstructed_list
+
+    def checkForRank(self, hand):
+        """
+        Takes the results from CheckForPairs, then determines stuff
+        """
+        results,remaining = self.checkForPairs(hand)
+        results = sorted(results, key=len, reverse=True) # allows the 3 pairs to be considered first
+        if len(results) == 1:
+            if len(results[0]) >= 4:
+                return HandRankings(7, results[0], [remaining[-1]]) # four of a kind
             else:
-                prev_val = hand[i]['value']
-                print(f"new val {prev_val}")
-                if consecutive_count == 4:
-                    valid_pairs.append(HandRankings(7, hand[i - 4:i]))
-                    consecutive_count = 1
-                elif consecutive_count == 3:
-                    valid_pairs.append(HandRankings(3, hand[i - 3:i]))
-                    consecutive_count = 1
-                elif consecutive_count == 2:
-                    valid_pairs.append(HandRankings(2, hand[i - 2:i]))
-                    consecutive_count = 1
-        if len(valid_pairs) >= 1:
-            return valid_pairs[0].score
-        else: 
+                return HandRankings(len(results[0]), results[0], [remaining[-(5-len(results[0])):]]) # three/two of a kind
+        elif len(results) == 2:
+            if len(results[0]) == 4:
+                remaining.extend(results[1])  # Extend the remaining list with results[1]
+                remaining = sorted(remaining, key=lambda card: card['value'])
+                return HandRankings(7, results[0], [remaining[-1]]) # four of a kind
+            elif len(results[0]) == 3 and len(results[1]) == 3:
+                results[1].pop() # removes the last item to make a full house
+                x = results[0] + results[1]
+                return HandRankings(6, x, []) # full house
+            elif len(results[0]) == 3 and len(results[1]) == 2:
+                x = results[0] + results[1]
+                return HandRankings(6, x, []) # full house
+            elif len(results[0]) == 2 and len(results[1]) == 2:
+                x = results[0] + results[1]
+                return HandRankings(2, x, [remaining[-1]]) # two pair
+        elif len(results) == 3:
+            if len(results[0]) == 3 and len(results[1]) == 2 and len(results[2]) == 2:
+                x = results[0] + results[1]
+                return HandRankings(6, x, []) # full house
+            elif len(results[0]) == 2 and len(results[1]) == 2 and len(results[2]) == 2:
+                x = results[0] + results[1]
+                remaining.extend(results[2])
+                remaining = sorted(remaining, key=lambda card: card['value'])
+                return HandRankings(2, x, [remaining[-1]]) # two pair
+        else:
             return None
+
 
         # {done} Royal Flush 9: five cards of the same suit, ranked ace through ten
         # {done} Straight Flush 8 : five cards of the same suit and consecutively ranked
@@ -135,9 +179,9 @@ class PokerGame:
         # Full House 6: three cards of the same rank and two more cards of the same rank
         # {done} Flush 5: any five cards of the same suit
         # Straight 4: any five cards consecutively ranked
-        # Three of a Kind 3: three cards of the same rank
-        # Two Pair 2: two cards of the same rank and two more cards of the same rank
-        # One Pair 1: two cards of the same rank
+        # {done} Three of a Kind 3: three cards of the same rank
+        # {done} Two Pair 2: two cards of the same rank and two more cards of the same rank
+        # {done} One Pair 1: two cards of the same rank
         # High Card 0: five unmatched cards
 
 
