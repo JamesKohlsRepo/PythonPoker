@@ -115,23 +115,23 @@ class TestCardRankings(unittest.TestCase):
 
     def test_Flush(self):
         x = self.game.checkForFlush(self.hands.flush_hand_1)
-        self.assertEqual(x, 5)
+        self.assertEqual(x.score, 5)
     
     def test_Ace_LowFlush(self):
         x = self.game.checkForFlush(self.hands.straight_flush_hand_2)
-        self.assertEqual(x, 8)
+        self.assertEqual(x.score, 8)
     
     def test_Ace_LowFlush_2(self):
         x = self.game.checkForFlush(self.hands.straight_flush_hand_3)
-        self.assertEqual(x, 8)
+        self.assertEqual(x.score, 8)
 
     def test_Straight_Flush(self):
         x = self.game.checkForFlush(self.hands.Straight_flush_hand_1)
-        self.assertEqual(x, 8)
+        self.assertEqual(x.score, 8)
 
     def test_Royal_Flush(self):
         x = self.game.checkForFlush(self.hands.Royal_flush_hand_1)
-        self.assertEqual(x, 9)
+        self.assertEqual(x.score, 9)
 
     def test_Four_Of_A_Kind(self):
         x = self.game.checkForRank(self.hands.Four_of_a_kind_1)
