@@ -91,7 +91,7 @@ class PokerGame:
             player.handValue.kick_cards.reverse()
 
             # Print the player's hand value
-            print(f"{player.name} : {player.handValue.score} {[card['value'] for card in player.handValue.rank_cards]} {[card['value'] for card in player.handValue.kick_cards]}")
+            print(f"{player.name} \t: {player.handValue.score} {[card['value'] for card in player.handValue.rank_cards]} {[card['value'] for card in player.handValue.kick_cards]}")
 
         # Determine winner
         winner = self.determineWinner()
@@ -108,24 +108,19 @@ class PokerGame:
                 x = self.compareDecks(player.handValue.rank_cards, temp_winner[0].handValue.rank_cards)
                 y = self.compareDecks(player.handValue.kick_cards, temp_winner[0].handValue.kick_cards)
                 if x == 1:
-                    print("won by rank")
+                    #print("rank")
                     temp_winner = [player] # When hand rankings are equal, check for highest rank in rank cards
                 elif x == 0 and y == 1:
-                    print("won by kicker")
+                    #print("kicker")
                     temp_winner = [player] # when rank cards are equal, check for highest kicker
                 elif x == 0 and y == 0:
                     temp_winner.append(player) 
-                    print("tie detected") # when both rank and kicker are equal, we have a tie
+                    #print("tie detected") # when both rank and kicker are equal, we have a tie
         return temp_winner
 
     def compareDecks(self, deck_1, deck_2):
         """
-        Helper for determineWinner, 
-
-        Returns:
-        0: Both are equal
-        1: Deck one wins
-        2: Deck two wins
+        Returns: 0: Both are equal, 1: Deck one wins, 2: Deck two wins
         """
         for i in range(0, len(deck_1)):
             if deck_1[i]['value'] > deck_2[i]['value']:
@@ -159,8 +154,10 @@ class PokerGame:
             if len(cards) >= 5:
                 flush_cards = cards[-5:]
                 if [card['value'] for card in cards[:5]] == [10, 11, 12, 13, 14]:
+                    flush_cards.reverse()
                     return HandRankings(9, flush_cards, []) # royal flush
                 if [card['value'] for card in cards[:5]] == [2, 3, 4, 5, 14]:
+                    flush_cards.reverse()
                     return HandRankings(8, flush_cards, []) # Ace-low Straight Flush, to be fixed later
                 consecutive_count = 1
                 straight_flush_cards = [flush_cards[0]]
@@ -169,10 +166,12 @@ class PokerGame:
                         consecutive_count += 1
                         straight_flush_cards.append(cards[i])
                         if consecutive_count == 5:
+                            straight_flush_cards.reverse()
                             return HandRankings(8, straight_flush_cards[-5:], [])  # Straight Flush
                     else:
                         consecutive_count = 1
                         straight_flush_cards = [cards[i]]
+                flush_cards.reverse()
                 return HandRankings(5, flush_cards, []) # Regular Flush
         return None # No Flush found
 
@@ -342,8 +341,11 @@ Player_1 = Player("James")
 Player_2 = Player("Belle")
 Player_3 = Player("Xan")
 Player_4 = Player("Phoebe")
+Player_5 = Player("Indigo")
+Player_6 = Player("Cindy")
+Player_7 = Player("Quinn")
 
-newGame.addPlayers(Player_1, Player_2, Player_3, Player_4)
+newGame.addPlayers(Player_1, Player_2, Player_3, Player_4, Player_5, Player_6, Player_7)
 newGame.deck.shuffle()
 
 print("\n")
