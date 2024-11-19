@@ -87,6 +87,9 @@ class PokerGame:
                 if result is not None and player.handValue.score < result.score:
                     player.handValue = result
 
+            # reverse kicker card order
+            player.handValue.kick_cards.reverse()
+
             # Print the player's hand value
             print(f"{player.name} : {player.handValue.score} {[card['value'] for card in player.handValue.rank_cards]} {[card['value'] for card in player.handValue.kick_cards]}")
 
@@ -106,13 +109,13 @@ class PokerGame:
                 y = self.compareDecks(player.handValue.kick_cards, temp_winner[0].handValue.kick_cards)
                 if x == 1:
                     print("won by rank")
-                    temp_winner = [player]
+                    temp_winner = [player] # When hand rankings are equal, check for highest rank in rank cards
                 elif x == 0 and y == 1:
                     print("won by kicker")
-                    temp_winner = [player]
+                    temp_winner = [player] # when rank cards are equal, check for highest kicker
                 elif x == 0 and y == 0:
-                    temp_winner.append(player)
-                    print("tie detected")
+                    temp_winner.append(player) 
+                    print("tie detected") # when both rank and kicker are equal, we have a tie
         return temp_winner
 
     def compareDecks(self, deck_1, deck_2):
@@ -218,17 +221,17 @@ class PokerGame:
         results = sorted(results, key=len, reverse=True) # allows the 3 pairs to be considered first
         if len(results) == 1:
             if len(results[0]) >= 4:
-                return HandRankings(7, results[0], [remaining[-1:]]) # four of a kind
+                return HandRankings(7, results[0], remaining[-1:]) # four of a kind
             else:
                 if len(results[0]) == 3:
-                    return HandRankings(3, results[0], [remaining[-(5-len(results[0]))]]) # three of a kind
+                    return HandRankings(3, results[0], remaining[-2:]) # three of a kind
                 else:
-                    return HandRankings(1, results[0], [remaining[-(5-len(results[0]))]]) # two of a kind
+                    return HandRankings(1, results[0], remaining[-3:]) # two of a kind
         elif len(results) == 2:
             if len(results[0]) == 4:
                 remaining.extend(results[1])  # Extend the remaining list with results[1]
                 remaining = sorted(remaining, key=lambda card: card['value'])
-                return HandRankings(7, results[0], [remaining[-1]]) # four of a kind
+                return HandRankings(7, results[0], remaining[-1:]) # four of a kind
             elif len(results[0]) == 3 and len(results[1]) == 3:
                 results[1].pop() # removes the last item to make a full house
                 x = results[0] + results[1]
@@ -238,7 +241,7 @@ class PokerGame:
                 return HandRankings(6, x, []) # full house
             elif len(results[0]) == 2 and len(results[1]) == 2:
                 x = results[0] + results[1]
-                return HandRankings(2, x, [remaining[-1]]) # two pair
+                return HandRankings(2, x, remaining[-1:]) # two pair
         elif len(results) == 3:
             if len(results[0]) == 3 and len(results[1]) == 2 and len(results[2]) == 2:
                 x = results[0] + results[1]
@@ -247,7 +250,7 @@ class PokerGame:
                 x = results[0] + results[1]
                 remaining.extend(results[2])
                 remaining = sorted(remaining, key=lambda card: card['value'])
-                return HandRankings(1, x, [remaining[-1]]) # two pair
+                return HandRankings(1, x, remaining[-1:]) # two pair
         else:
             return None
 
