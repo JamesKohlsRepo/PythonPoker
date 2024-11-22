@@ -88,7 +88,7 @@ class PokerGame:
                     player.handValue = result
 
             # reverse kicker card order
-            player.handValue.kick_cards.reverse()
+            #player.handValue.kick_cards.reverse()
 
             # Print the player's hand value
             print(f"{player.name} \t: {player.handValue.score} {[card['value'] for card in player.handValue.rank_cards]} {[card['value'] for card in player.handValue.kick_cards]}")
@@ -122,7 +122,7 @@ class PokerGame:
         """
         Returns: 0: Both are equal, 1: Deck one wins, 2: Deck two wins
         """
-        for i in range(0, len(deck_1)):
+        for i in range(len(deck_1) - 1, -1, -1):
             if deck_1[i]['value'] > deck_2[i]['value']:
                 return 1
             elif deck_1[i]['value'] < deck_2[i]['value']:
@@ -154,10 +154,8 @@ class PokerGame:
             if len(cards) >= 5:
                 flush_cards = cards[-5:]
                 if [card['value'] for card in cards[:5]] == [10, 11, 12, 13, 14]:
-                    flush_cards.reverse()
                     return HandRankings(9, flush_cards, []) # royal flush
                 if [card['value'] for card in cards[:5]] == [2, 3, 4, 5, 14]:
-                    flush_cards.reverse()
                     return HandRankings(8, flush_cards, []) # Ace-low Straight Flush, to be fixed later
                 consecutive_count = 1
                 straight_flush_cards = [flush_cards[0]]
@@ -166,12 +164,10 @@ class PokerGame:
                         consecutive_count += 1
                         straight_flush_cards.append(cards[i])
                         if consecutive_count == 5:
-                            straight_flush_cards.reverse()
                             return HandRankings(8, straight_flush_cards[-5:], [])  # Straight Flush
                     else:
                         consecutive_count = 1
                         straight_flush_cards = [cards[i]]
-                flush_cards.reverse()
                 return HandRankings(5, flush_cards, []) # Regular Flush
         return None # No Flush found
 
@@ -191,7 +187,7 @@ class PokerGame:
         for card in hand:
             ranks[card['value']].append(card)
 
-        for rank in reversed(list(ranks.items())):
+        for rank in list(ranks.items()):
             i  = len(rank[1])
             if i >= 2:
                 valid_pairs.append(rank[1])
@@ -217,7 +213,7 @@ class PokerGame:
             None
         """
         results,remaining = self.checkForPairs(hand)
-        results = sorted(results, key=len, reverse=True) # allows the 3 pairs to be considered first
+        results = sorted(results, key=len) 
         if len(results) == 1:
             if len(results[0]) >= 4:
                 return HandRankings(7, results[0], remaining[-1:]) # four of a kind
@@ -227,29 +223,29 @@ class PokerGame:
                 else:
                     return HandRankings(1, results[0], remaining[-3:]) # two of a kind
         elif len(results) == 2:
-            if len(results[0]) == 4:
-                remaining.extend(results[1])  # Extend the remaining list with results[1]
+            if len(results[0]) == 2 and len(results[1]) == 4:
+                remaining.extend(results[0])  # Extend the remaining list with results[0]
                 remaining = sorted(remaining, key=lambda card: card['value'])
                 return HandRankings(7, results[0], remaining[-1:]) # four of a kind
             elif len(results[0]) == 3 and len(results[1]) == 3:
-                results[1].pop() # removes the last item to make a full house
+                results[0].pop() # removes the last item to make a full house
                 x = results[0] + results[1]
                 return HandRankings(6, x, []) # full house
-            elif len(results[0]) == 3 and len(results[1]) == 2:
+            elif len(results[0]) == 2 and len(results[1]) == 3:
                 x = results[0] + results[1]
                 return HandRankings(6, x, []) # full house
             elif len(results[0]) == 2 and len(results[1]) == 2:
                 x = results[0] + results[1]
                 return HandRankings(2, x, remaining[-1:]) # two pair
         elif len(results) == 3:
-            if len(results[0]) == 3 and len(results[1]) == 2 and len(results[2]) == 2:
+            if len(results[0]) == 2 and len(results[1]) == 2 and len(results[2]) == 3:
                 x = results[0] + results[1]
                 return HandRankings(6, x, []) # full house
             elif len(results[0]) == 2 and len(results[1]) == 2 and len(results[2]) == 2:
                 x = results[0] + results[1]
-                remaining.extend(results[2])
+                remaining.extend(results[0])
                 remaining = sorted(remaining, key=lambda card: card['value'])
-                return HandRankings(1, x, remaining[-1:]) # two pair
+                return HandRankings(2, x, remaining[-1:]) # two pair
         else:
             return None
 

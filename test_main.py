@@ -151,7 +151,7 @@ class TestCardRankings(unittest.TestCase):
 
     def test_Two_of_a_kind_1(self):
         x = self.game.checkForRank(self.hands.Two_of_a_kind_1)
-        self.assertEqual(x.score, 2)
+        self.assertEqual(x.score, 1)
 
     def test_Two_pair_1(self):
         x = self.game.checkForRank(self.hands.Two_pair_1)
